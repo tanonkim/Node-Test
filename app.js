@@ -61,6 +61,24 @@ app.get("/posts", async (req, res) => {
   res.status(200).json({ data: rows });
 });
 
+app.get("/users/posts/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const rows = await dataSource.query(
+    `SELECT u.id    as userId,
+    u.profile_image as userProfileImage,
+    p.id            as postingId,
+    p.image_url     as postingImageUrl,
+    p.content       as postingContent
+    FROM users      as u
+    LEFT JOIN posts as p
+    ON u.id = p.user_id
+    WHERE u.id = ${id}
+    `
+  );
+  res.status(200).json({ data: rows });
+});
+
 const PORT = process.env.PORT;
 
 const start = async () => {
