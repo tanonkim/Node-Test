@@ -51,6 +51,16 @@ app.post("/users/signin", async (req, res) => {
   res.status(201).json({ message: "User_Created" });
 });
 
+app.get("/posts", async (req, res) => {
+  const rows = await dataSource.query(
+    `SELECT u.id, u.profile_image, p.user_id, p.image_url, content
+    FROM users as u
+             LEFT JOIN posts p ON u.id = p.user_id
+    `
+  );
+  res.status(200).json({ data: rows });
+});
+
 const PORT = process.env.PORT;
 
 const start = async () => {
