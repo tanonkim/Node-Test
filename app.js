@@ -76,7 +76,22 @@ app.get("/users/posts/:id", async (req, res) => {
     WHERE u.id = ${id}
     `
   );
-  res.status(200).json({ data: rows });
+
+  const postArr = (rows) => {
+    for (let i = 0; i < rows.length; i++) {
+      delete rows[i].userId;
+      delete rows[i].userProfileImage;
+    }
+    return rows;
+  };
+
+  res.status(200).json({
+    data: {
+      userId: rows[0].userId,
+      userProfileImage: rows[0].userProfileImage,
+      postings: postArr(rows),
+    },
+  });
 });
 
 const PORT = process.env.PORT;
