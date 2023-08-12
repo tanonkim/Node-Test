@@ -1,0 +1,6 @@
+-- migrate:up
+ALTER TABLE users MODIFY created_at DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW();
+ALTER TABLE users MODIFY updated_at DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW();
+
+-- migrate:down
+DROP TABLE users;
