@@ -6,16 +6,8 @@ const morgan = require("morgan");
 
 dotenv.config();
 
-const { DataSource } = require("typeorm");
-
-const dataSource = new DataSource({
-  type: process.env.DB_CONNECTION,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-});
+const dataSource = require("./models/appDataSource");
+const routes = require("./routes");
 
 dataSource
   .initialize()
@@ -31,24 +23,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
+app.use(routes);
 
 app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });
-});
-
-app.post("/users/signin", async (req, res) => {
-  const { name, email, profileImage, password } = req.body;
-
-  await dataSource.query(
-    `INSERT INTO users(
-      name,
-      email, 
-      profile_image,
-      password
-    ) VALUES (?, ?, ?, ?)`,
-    [name, email, profileImage, password]
-  );
-  res.status(201).json({ message: "User_Created" });
 });
 
 app.get("/posts", async (req, res) => {
