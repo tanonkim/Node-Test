@@ -17,4 +17,23 @@ const signUp = async (req, res) => {
   }
 };
 
-module.exports = { signUp };
+const getPostsByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const rows = await userService.getPostsByUserId(userId);
+    const processedPosts = userService.processPosts(rows);
+
+    res.status(200).json({
+      data: {
+        userId: rows[0].userId,
+        userProfileImage: rows[0].userProfileImage,
+        postings: processedPosts,
+      },
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ message: error.message });
+  }
+};
+
+module.exports = { signUp, getPostsByUserId };

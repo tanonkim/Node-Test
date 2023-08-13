@@ -39,39 +39,6 @@ app.get("/posts", async (req, res) => {
   res.status(200).json({ data: rows });
 });
 
-app.get("/users/posts/:id", async (req, res) => {
-  const { id } = req.params;
-
-  const rows = await dataSource.query(
-    `SELECT u.id    as userId,
-    u.profile_image as userProfileImage,
-    p.id            as postingId,
-    p.image_url     as postingImageUrl,
-    p.content       as postingContent
-    FROM users      as u
-    LEFT JOIN posts as p
-    ON u.id = p.user_id
-    WHERE u.id = ${id}
-    `
-  );
-
-  const postArr = (rows) => {
-    for (let i = 0; i < rows.length; i++) {
-      delete rows[i].userId;
-      delete rows[i].userProfileImage;
-    }
-    return rows;
-  };
-
-  res.status(200).json({
-    data: {
-      userId: rows[0].userId,
-      userProfileImage: rows[0].userProfileImage,
-      postings: postArr(rows),
-    },
-  });
-});
-
 app.patch("/users/:userId/posts/:postId", async (req, res) => {
   const { userId, postId } = req.params;
   const { content } = req.body;
