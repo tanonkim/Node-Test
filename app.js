@@ -121,6 +121,35 @@ app.patch("/users/:userId/posts/:postId", async (req, res) => {
   res.status(200).json({ data: rows });
 });
 
+app.delete("/posts/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const postInfoQuery = await dataSource.query(
+    `
+    SELECT *
+    FROM posts
+    WHERE id = ?
+    `,
+    [id]
+  );
+
+  const postInfo = postInfoQuery[0];
+
+  if (postInfo) {
+    await dataSource.query(
+      `
+      DELETE
+      FROM posts
+      WHERE id = ?
+      `,
+      [id]
+    );
+    res.status(200).json({ message: `${postInfo.id} Deleted` });
+  } else {
+    res.status(404).json({ message: `Post with ID ${id} not found` });
+  }
+});
+
 const PORT = process.env.PORT;
 
 const start = async () => {
