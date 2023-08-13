@@ -150,6 +150,21 @@ app.delete("/posts/:id", async (req, res) => {
   }
 });
 
+app.post("/likes/:userId/:postId", async (req, res) => {
+  const { userId, postId } = req.params;
+  console.log(userId);
+  console.log(postId);
+
+  await dataSource.query(
+    `
+    INSERT INTO likes(user_id, post_id)
+    VALUES (?, ?)
+    `,
+    [userId, postId]
+  );
+  res.status(200).json({ message: "likeCreated" });
+});
+
 const PORT = process.env.PORT;
 
 const start = async () => {
