@@ -29,16 +29,6 @@ app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });
 });
 
-app.get("/posts", async (req, res) => {
-  const rows = await dataSource.query(
-    `SELECT u.id, u.profile_image, p.user_id, p.image_url, content
-    FROM users as u
-             LEFT JOIN posts p ON u.id = p.user_id
-    `
-  );
-  res.status(200).json({ data: rows });
-});
-
 app.delete("/posts/:id", async (req, res) => {
   const { id } = req.params;
 
