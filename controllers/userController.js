@@ -36,4 +36,17 @@ const getPostsByUserId = async (req, res) => {
   }
 };
 
-module.exports = { signUp, getPostsByUserId };
+const updatePostByUserId = async (req, res) => {
+  try {
+    const { userId, postId } = req.params;
+    const { content } = req.body;
+
+    const rows = await userService.updatePostContent(userId, postId, content);
+
+    res.status(200).json({ data: rows });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ message: error.message });
+  }
+};
+
+module.exports = { signUp, getPostsByUserId, updatePostByUserId };

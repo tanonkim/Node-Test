@@ -43,4 +43,46 @@ const getPostsByUserId = async (userId) => {
   }
 };
 
-module.exports = { createUser, getPostsByUserId };
+const updatePostContent = async (userId, postId, content) => {
+  try {
+    return await appDataSource.query(
+      `
+        UPDATE posts
+        SET content = ?
+        WHERE user_id = ?
+          AND id = ?
+        `,
+      [content, userId, postId]
+    );
+  } catch (err) {
+    const error = new Error("INVALID_DATA_INPUT");
+    error.statusCode = 500;
+    throw error;
+  }
+};
+
+const getUpdatedPost = async (userId, postId) => {
+  try {
+    return await appDataSource.query(
+      `
+      SELECT p.user_id as userId, u.name, p.id as postingId, p.title as postingTitle, p.content as postingContent
+      FROM posts as p
+      LEFT JOIN users u ON p.user_id = u.id
+      WHERE user_id = ?
+        AND p.id = ?
+      `,
+      [userId, postId]
+    );
+  } catch (err) {
+    const error = new Error("INVALID_DATA_INPUT");
+    error.statusCode = 500;
+    throw error;
+  }
+};
+
+module.exports = {
+  createUser,
+  getPostsByUserId,
+  updatePostContent,
+  getUpdatedPost,
+};

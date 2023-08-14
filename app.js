@@ -39,33 +39,6 @@ app.get("/posts", async (req, res) => {
   res.status(200).json({ data: rows });
 });
 
-app.patch("/users/:userId/posts/:postId", async (req, res) => {
-  const { userId, postId } = req.params;
-  const { content } = req.body;
-
-  await dataSource.query(
-    `
-    UPDATE posts
-    SET content = ?
-    WHERE user_id = ?
-      and id = ?
-    `,
-    [content, userId, postId]
-  );
-
-  const rows = await dataSource.query(
-    `
-    SELECT p.user_id as userId, u.name, p.id as postingId, p.title as postingTitle, p.content as postingContent
-    FROM posts as p
-         LEFT JOIN users u ON p.user_id = u.id
-    WHERE user_id = ?
-      and p.id = ?
-    `,
-    [userId, postId]
-  );
-  res.status(200).json({ data: rows });
-});
-
 app.delete("/posts/:id", async (req, res) => {
   const { id } = req.params;
 

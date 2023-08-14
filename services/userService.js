@@ -16,4 +16,18 @@ const processPosts = (rows) => {
   }));
 };
 
-module.exports = { signUp, getPostsByUserId, processPosts };
+const updatePostContent = async (userId, postId, content) => {
+  try {
+    userDao.updatePostContent(userId, postId, content);
+    return userDao.getUpdatedPost(userId, postId);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = {
+  signUp,
+  getPostsByUserId,
+  processPosts,
+  updatePostContent,
+};
