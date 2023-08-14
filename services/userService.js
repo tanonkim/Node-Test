@@ -25,7 +25,7 @@ const signUp = async (name, email, profileImage, password) => {
 
 const signIn = async (email, password) => {
   try {
-    const user = await userDao.findUserIdByEmail(email);
+    const user = await findUserIdByEmail(email);
 
     if (!user) {
       const err = new Error("INVALID_EMAIL_OR_PASSWORD");
@@ -41,7 +41,7 @@ const signIn = async (email, password) => {
       throw err;
     }
 
-    const payload = { userId: user.id };
+    const payload = { userId: user.email };
     const token = jwt.sign(payload, secretKey, { expiresIn: "6h" });
 
     return token;
@@ -67,6 +67,14 @@ const updatePostContent = async (userId, postId, content) => {
   try {
     userDao.updatePostContent(userId, postId, content);
     return userDao.getUpdatedPost(userId, postId);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const findUserIdByEmail = async (email) => {
+  try {
+    return await userDao.findUserIdByEmail(email);
   } catch (error) {
     console.log(error);
   }
