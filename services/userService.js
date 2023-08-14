@@ -34,7 +34,6 @@ const signIn = async (email, password) => {
     }
 
     const isMatched = await bcrypt.compare(password, user.password);
-    console.log(isMatched);
 
     if (!isMatched) {
       const err = new Error("INVALID_EMAIL_OR_PASSWORD");
