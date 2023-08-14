@@ -9,6 +9,14 @@ const postInfo = async (postId) => {
   return postInfoQuery[0];
 };
 
+const createPost = async (title, content, image_url, user_id) => {
+  try {
+    return postDao.createPost(title, content, image_url, user_id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const deletePostById = async (postId) => {
   const postData = await postInfo(postId);
 
@@ -20,4 +28,8 @@ const deletePostById = async (postId) => {
   }
 };
 
-module.exports = { getAllposts, deletePostById };
+module.exports = {
+  getAllposts,
+  createPost,
+  deletePostById,
+};

@@ -9,6 +9,31 @@ const getAllposts = async (req, res) => {
   }
 };
 
+const createPost = async (req, res) => {
+  try {
+    const { title, content, imageUrl } = req.body;
+    const { userId } = req.params;
+
+    if (!title || !content || !userId) {
+      return res.status(400).json({ message: "KEY_ERROR" });
+    }
+
+    const postId = await postService.createPost(
+      title,
+      content,
+      imageUrl,
+      userId
+    );
+
+    res
+      .status(201)
+      .json({ message: `NEWPOST_UPLOADED, postId : ${postId.insertId}` });
+  } catch (error) {
+    console.log(err);
+    return res.status(err.statusCode || 500).json({ messgae: err.message });
+  }
+};
+
 const deletePostById = async (req, res) => {
   const { postId } = req.params;
 
@@ -24,4 +49,8 @@ const deletePostById = async (req, res) => {
     return res.status(err.statusCode || 500).json({ messgae: err.message });
   }
 };
-module.exports = { getAllposts, deletePostById };
+module.exports = {
+  getAllposts,
+  createPost,
+  deletePostById,
+};

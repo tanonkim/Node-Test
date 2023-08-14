@@ -38,6 +38,22 @@ const checkExistPost = async (postId) => {
   }
 };
 
+const createPost = async (title, content, image_url, user_id) => {
+  try {
+    return await appDataSource.query(
+      `
+      INSERT INTO posts(title, content, image_url, user_id)
+      VALUES (?, ?, ?, ?);
+    `,
+      [title, content, image_url, user_id]
+    );
+  } catch (err) {
+    const error = new Error("INVALID_DATA_INPUT");
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const deletePostById = async (postId) => {
   try {
     return await appDataSource.query(
@@ -55,4 +71,9 @@ const deletePostById = async (postId) => {
   }
 };
 
-module.exports = { getAllposts, checkExistPost, deletePostById };
+module.exports = {
+  getAllposts,
+  checkExistPost,
+  createPost,
+  deletePostById,
+};
