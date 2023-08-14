@@ -21,4 +21,38 @@ const getAllposts = async () => {
   }
 };
 
-module.exports = { getAllposts };
+const checkExistPost = async (postId) => {
+  try {
+    return await appDataSource.query(
+      `
+        SELECT *
+        FROM posts
+        WHERE id = ?
+      `,
+      [postId]
+    );
+  } catch (err) {
+    const error = new Error("INVALID_DATA_INPUT");
+    error.statusCode = 500;
+    throw error;
+  }
+};
+
+const deletePostById = async (postId) => {
+  try {
+    return await appDataSource.query(
+      `
+        DELETE
+        FROM posts
+        WHERE id = ?
+      `,
+      [postId]
+    );
+  } catch (err) {
+    const error = new Error("INVALID_DATA_INPUT");
+    error.statusCode = 500;
+    throw error;
+  }
+};
+
+module.exports = { getAllposts, checkExistPost, deletePostById };

@@ -5,6 +5,7 @@ const postController = require("../controllers/postController");
 
 try {
   router.get("", postController.getAllposts);
+  router.delete("/:postId", postController.deletePostById);
 } catch (error) {
   console.log(error);
 }

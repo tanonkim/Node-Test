@@ -29,35 +29,6 @@ app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });
 });
 
-app.delete("/posts/:id", async (req, res) => {
-  const { id } = req.params;
-
-  const postInfoQuery = await dataSource.query(
-    `
-    SELECT *
-    FROM posts
-    WHERE id = ?
-    `,
-    [id]
-  );
-
-  const postInfo = postInfoQuery[0];
-
-  if (postInfo) {
-    await dataSource.query(
-      `
-      DELETE
-      FROM posts
-      WHERE id = ?
-      `,
-      [id]
-    );
-    res.status(200).json({ message: `${postInfo.id} Deleted` });
-  } else {
-    res.status(404).json({ message: `Post with ID ${id} not found` });
-  }
-});
-
 app.post("/likes/:userId/:postId", async (req, res) => {
   const { userId, postId } = req.params;
 
