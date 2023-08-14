@@ -1,6 +1,8 @@
 const userDao = require("../models/userDao");
 const bcrypt = require("bcrypt");
 const { emailRegex, passwordRegex } = require("../utils/regex");
+const jwt = require("jsonwebtoken");
+const secretKey = process.env.SECRET_KEY;
 
 const signUp = async (name, email, profileImage, password) => {
   if (!emailRegex.test(email)) {
@@ -19,6 +21,35 @@ const signUp = async (name, email, profileImage, password) => {
   const hashedPassword = await bcrypt.hash(password, saltRound);
 
   return userDao.createUser(name, email, profileImage, hashedPassword);
+};
+
+const signIn = async (email, password) => {
+  try {
+    const user = await userDao.findUserIdByEmail(email);
+
+    if (!user) {
+      const err = new Error("INVALID_EMAIL_OR_PASSWORD");
+      err.statusCode = 401;
+      throw err;
+    }
+
+    const isMatched = await bcrypt.compare(password, user.password);
+    console.log(isMatched);
+
+    if (!isMatched) {
+      const err = new Error("INVALID_EMAIL_OR_PASSWORD");
+      err.statusCode = 401;
+      throw err;
+    }
+
+    const payload = { userId: user.id };
+    const token = jwt.sign(payload, secretKey);
+
+    return token;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 const getPostsByUserId = async (userId) => {
@@ -44,6 +75,7 @@ const updatePostContent = async (userId, postId, content) => {
 
 module.exports = {
   signUp,
+  signIn,
   getPostsByUserId,
   processPosts,
   updatePostContent,

@@ -20,6 +20,25 @@ const createUser = async (name, email, profileImage, password) => {
   }
 };
 
+const findUserIdByEmail = async (email) => {
+  try {
+    const [data] = await appDataSource.query(
+      `
+      SELECT id, email, password
+      FROM users
+      WHERE email = ?;
+      `,
+      [email]
+    );
+
+    return data;
+  } catch (err) {
+    const error = new Error("INVALID_DATA_INPUT");
+    error.statusCode = 500;
+    throw error;
+  }
+};
+
 const getPostsByUserId = async (userId) => {
   try {
     const rows = await appDataSource.query(
@@ -85,4 +104,5 @@ module.exports = {
   getPostsByUserId,
   updatePostContent,
   getUpdatedPost,
+  findUserIdByEmail,
 };
