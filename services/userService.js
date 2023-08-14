@@ -43,7 +43,7 @@ const signIn = async (email, password) => {
     }
 
     const payload = { userId: user.id };
-    const token = jwt.sign(payload, secretKey);
+    const token = jwt.sign(payload, secretKey, { expiresIn: "6h" });
 
     return token;
   } catch (error) {
