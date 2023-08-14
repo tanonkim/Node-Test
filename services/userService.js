@@ -1,5 +1,5 @@
 const userDao = require("../models/userDao");
-
+const bcrypt = require("bcrypt");
 const signUp = async (name, email, profileImage, password) => {
   const emailRegex =
     /^[0-9a-zA-Z]([-_\\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
@@ -19,7 +19,10 @@ const signUp = async (name, email, profileImage, password) => {
     throw error;
   }
 
-  return userDao.createUser(name, email, profileImage, password);
+  const saltRound = 12;
+  const hashedPassword = await bcrypt.hash(password, saltRound);
+
+  return userDao.createUser(name, email, profileImage, hashedPassword);
 };
 
 const getPostsByUserId = async (userId) => {
