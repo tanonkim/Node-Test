@@ -9,20 +9,24 @@ const loginReq = async (req, res, next) => {
     if (!token) {
       const error = new Error("NO_AUTHORIZATION_IN_HEADER");
       error.statusCode = 401;
-      return next(error);
+      throw error;
     }
 
     let decoded;
     try {
       decoded = jwt.verify(token, secretKey);
     } catch (e) {
-      throw new Error("INVALID_TOKEN");
+      const error = new Error("INVALID_TOKEN");
+      error.statusCode = 401;
+      throw error;
     }
 
     const userData = await userService.findUserIdByEmail(decoded.userId);
 
     if (!userData) {
-      throw new Error("INVALID_USER");
+      const error = new Error("INVALID_USER");
+      error.statusCode = 401;
+      throw error;
     }
 
     req.userId = userData.id;
