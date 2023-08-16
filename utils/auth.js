@@ -12,13 +12,23 @@ const loginReq = async (req, res, next) => {
       return next(error);
     }
 
-    const decoded = jwt.verify(token, secretKey);
-    const userEmail = await userService;
+    let decoded;
+    try {
+      decoded = jwt.verify(token, secretKey);
+    } catch (e) {
+      throw new Error("INVALID_TOKEN");
+    }
 
-    req.email = decoded.email;
+    const userData = await userService.findUserIdByEmail(decoded.userId);
+
+    if (!userData) {
+      throw new Error("INVALID_USER");
+    }
+
+    req.userId = userData.id;
     next();
   } catch (error) {
-    next(error);
+    return res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
 
