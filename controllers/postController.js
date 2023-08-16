@@ -12,9 +12,8 @@ const getAllposts = async (req, res) => {
 const createPost = async (req, res) => {
   try {
     const { title, content, imageUrl } = req.body;
-    const { userId } = req.params;
 
-    if (!title || !content || !userId) {
+    if (!title || !content) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
@@ -22,15 +21,15 @@ const createPost = async (req, res) => {
       title,
       content,
       imageUrl,
-      userId
+      req.userId
     );
 
     res
       .status(201)
       .json({ message: `NEWPOST_UPLOADED, postId : ${postId.insertId}` });
-  } catch (error) {
+  } catch (err) {
     console.log(err);
-    return res.status(err.statusCode || 500).json({ messgae: err.message });
+    return res.status(401).json({ message: "invalid token" });
   }
 };
 

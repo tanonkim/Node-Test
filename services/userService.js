@@ -86,4 +86,5 @@ module.exports = {
   getPostsByUserId,
   processPosts,
   updatePostContent,
+  findUserIdByEmail,
 };
