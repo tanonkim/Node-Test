@@ -46,18 +46,21 @@ const getPostsByUserId = async (req, res) => {
     const { userId } = req.params;
 
     const rows = await userService.getPostsByUserId(userId);
+    if (!rows) {
+      throw new CustomException();
+    }
     const processedPosts = userService.processPosts(rows);
 
-    res.status(200).json({
-      data: {
-        userId: rows[0].userId,
-        userProfileImage: rows[0].userProfileImage,
-        postings: processedPosts,
-      },
-    });
+    const data = {
+      userId: rows[0].userId,
+      userProfileImage: rows[0].userProfileImage,
+      postings: processedPosts,
+    };
+
+    return baseResponse(data, res);
   } catch (error) {
     console.log(error);
-    next(error);
+    return baseResponse(error, res);
   }
 };
 
