@@ -19,7 +19,7 @@ const signUp = async (name, email, profileImage, password) => {
     throw new customException(INVALID_REQUEST);
   }
 
-  if (userDao.findUserIdByEmail(email)) {
+  if (await userDao.findUserIdByEmail(email)) {
     throw new customException(DUPLICATED_EMAIL);
   }
 
