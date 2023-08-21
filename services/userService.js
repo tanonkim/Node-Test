@@ -2,19 +2,20 @@ const userDao = require("../models/userDao");
 const bcrypt = require("bcrypt");
 const { emailRegex, passwordRegex } = require("../utils/regex");
 const jwt = require("jsonwebtoken");
+const customException = require("../utils/handler/customException");
+const {
+  INVALID_REQUEST,
+  INVALID_EMAIL_OR_PASSWORD,
+} = require("../utils/baseResponseStatus");
 const secretKey = process.env.SECRET_KEY;
 
 const signUp = async (name, email, profileImage, password) => {
   if (!emailRegex.test(email)) {
-    const error = new Error("NOT_VALID_EMAIL_REGEX");
-    error.statusCode = 400;
-    throw error;
+    throw new customException(INVALID_REQUEST);
   }
 
   if (!passwordRegex.test(password)) {
-    const error = new Error("NOT_VALID_PASSWORD_REGEX");
-    error.statusCode = 400;
-    throw error;
+    throw new customException(INVALID_REQUEST);
   }
 
   const saltRound = 12;
@@ -28,17 +29,13 @@ const signIn = async (email, password) => {
     const user = await findUserIdByEmail(email);
 
     if (!user) {
-      const err = new Error("INVALID_EMAIL_OR_PASSWORD");
-      err.statusCode = 401;
-      throw err;
+      throw new customException(INVALID_EMAIL_OR_PASSWORD);
     }
 
     const isMatched = await bcrypt.compare(password, user.password);
 
     if (!isMatched) {
-      const err = new Error("INVALID_EMAIL_OR_PASSWORD");
-      err.statusCode = 401;
-      throw err;
+      throw new customException(INVALID_EMAIL_OR_PASSWORD);
     }
 
     const payload = { userId: user.email };

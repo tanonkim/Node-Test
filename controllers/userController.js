@@ -1,6 +1,6 @@
 const userService = require("../services/userService");
 
-const signUp = async (req, res) => {
+const signUp = async (req, res, next) => {
   try {
     const { name, email, profileImage, password } = req.body;
 
@@ -13,7 +13,7 @@ const signUp = async (req, res) => {
     res.status(201).json({ message: "User_Created" });
   } catch (error) {
     console.log(error);
-    return res.status(error.statusCode || 500).json({ messgae: error.message });
+    next(error);
   }
 };
 
@@ -29,7 +29,7 @@ const signIn = async (req, res) => {
     res.status(200).json({ accessToken: token });
   } catch (error) {
     console.log(error);
-    return res.status(error.statusCode || 500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -48,7 +48,8 @@ const getPostsByUserId = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(error.statusCode || 500).json({ message: error.message });
+    console.log(error);
+    next(error);
   }
 };
 
@@ -61,7 +62,8 @@ const updatePostByUserId = async (req, res) => {
 
     res.status(200).json({ data: rows });
   } catch (error) {
-    return res.status(error.statusCode || 500).json({ message: error.message });
+    console.log(error);
+    next(error);
   }
 };
 
