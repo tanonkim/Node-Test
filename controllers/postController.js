@@ -1,11 +1,15 @@
 const postService = require("../services/postService");
+const baseResponse = require("../utils/baseResponse");
+const { KEY_ERROR, NONE_POST } = require("../utils/baseResponseStatus");
+const CustomException = require("../utils/handler/customException");
 
 const getAllposts = async (req, res) => {
   try {
     const rows = await postService.getAllposts();
-    res.status(200).json({ data: rows });
+    return baseResponse(rows, res);
   } catch (error) {
-    return res.status(err.statusCode || 500).json({ messgae: err.message });
+    console.log(error);
+    return baseResponse(error, res);
   }
 };
 
@@ -14,7 +18,7 @@ const createPost = async (req, res) => {
     const { title, content, imageUrl } = req.body;
 
     if (!title || !content) {
-      return res.status(400).json({ message: "KEY_ERROR" });
+      throw new CustomException(KEY_ERROR);
     }
 
     const postId = await postService.createPost(
@@ -24,12 +28,10 @@ const createPost = async (req, res) => {
       req.userId
     );
 
-    res
-      .status(201)
-      .json({ message: `NEWPOST_UPLOADED, postId : ${postId.insertId}` });
-  } catch (err) {
-    console.log(err);
-    return res.status(401).json({ message: "invalid token" });
+    return baseResponse({ postId: `${postId.insertId}` }, res);
+  } catch (error) {
+    console.log(error);
+    return baseResponse(error, res);
   }
 };
 
@@ -40,12 +42,13 @@ const deletePostById = async (req, res) => {
     const result = await postService.deletePostById(postId);
 
     if (result.success) {
-      return res.status(200).json({ message: `${result.postData} Deleted` });
+      return baseResponse({ id: `${result.postData}` }, res);
     } else {
-      res.status(404).json({ message: `Post with ID not found : ${postId}` });
+      throw new CustomException(NONE_POST);
     }
   } catch (error) {
-    return res.status(err.statusCode || 500).json({ messgae: err.message });
+    console.log(error);
+    return baseResponse(error, res);
   }
 };
 module.exports = {
