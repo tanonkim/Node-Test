@@ -1,4 +1,5 @@
 const userService = require("../services/userService");
+const baseResponse = require("../utils/baseResponse");
 
 const signUp = async (req, res, next) => {
   try {
@@ -8,12 +9,17 @@ const signUp = async (req, res, next) => {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
-    await userService.signUp(name, email, profileImage, password);
+    const userId = await userService.signUp(
+      name,
+      email,
+      profileImage,
+      password
+    );
 
-    res.status(201).json({ message: "User_Created" });
+    return baseResponse({ userId: userId }, res);
   } catch (error) {
     console.log(error);
-    next(error);
+    return baseResponse(error, res);
   }
 };
 
@@ -29,7 +35,7 @@ const signIn = async (req, res) => {
     res.status(200).json({ accessToken: token });
   } catch (error) {
     console.log(error);
-    next(error);
+    return baseResponse(error, res);
   }
 };
 
