@@ -1,6 +1,6 @@
 const userService = require("../services/userService");
 const baseResponse = require("../utils/baseResponse");
-const { KEY_ERROR } = require("../utils/baseResponseStatus");
+const { KEY_ERROR, NONE_POST } = require("../utils/baseResponseStatus");
 const CustomException = require("../utils/handler/customException");
 
 const signUp = async (req, res, next) => {
@@ -46,8 +46,8 @@ const getPostsByUserId = async (req, res) => {
     const { userId } = req.params;
 
     const rows = await userService.getPostsByUserId(userId);
-    if (!rows) {
-      throw new CustomException();
+    if (rows.length === 0) {
+      throw new CustomException(NONE_POST);
     }
     const processedPosts = userService.processPosts(rows);
 

@@ -23,6 +23,8 @@ const baseResponseStatus = {
     responseCode: 2001,
     responseMessage: "KEY_ERROR가 존재합니다.",
   },
+
+  //   UserException
   INVALID_EMAIL_OR_PASSWORD: {
     key: "INVALID_EMAIL_ORPASSWORD",
     isSuccess: false,
@@ -34,6 +36,14 @@ const baseResponseStatus = {
     isSuccess: false,
     responseCode: 2011,
     responseMessage: "중복된 이메일입니다.",
+  },
+
+  // PostException
+  NONE_POST: {
+    key: "NONE_POST",
+    isSuccess: false,
+    responseCode: 2020,
+    responseMessage: "POST가 존재하지 않습니다.",
   },
 
   /**
