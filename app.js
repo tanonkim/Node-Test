@@ -8,6 +8,7 @@ dotenv.config();
 
 const dataSource = require("./models/appDataSource");
 const routes = require("./routes");
+const baseResponse = require("./utils/baseResponse");
 
 dataSource
   .initialize()
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 app.use(routes);
+app.use(baseResponse);
 
 app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });

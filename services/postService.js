@@ -14,6 +14,7 @@ const createPost = async (title, content, image_url, user_id) => {
     return postDao.createPost(title, content, image_url, user_id);
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 

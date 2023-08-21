@@ -2,19 +2,27 @@ const userDao = require("../models/userDao");
 const bcrypt = require("bcrypt");
 const { emailRegex, passwordRegex } = require("../utils/regex");
 const jwt = require("jsonwebtoken");
+const customException = require("../utils/handler/customException");
+const {
+  INVALID_REQUEST,
+  INVALID_EMAIL_OR_PASSWORD,
+  DUPLICATED_EMAIL,
+  NONE_POST,
+} = require("../utils/baseResponseStatus");
+const CustomException = require("../utils/handler/customException");
 const secretKey = process.env.SECRET_KEY;
 
 const signUp = async (name, email, profileImage, password) => {
   if (!emailRegex.test(email)) {
-    const error = new Error("NOT_VALID_EMAIL_REGEX");
-    error.statusCode = 400;
-    throw error;
+    throw new customException(INVALID_REQUEST);
   }
 
   if (!passwordRegex.test(password)) {
-    const error = new Error("NOT_VALID_PASSWORD_REGEX");
-    error.statusCode = 400;
-    throw error;
+    throw new customException(INVALID_REQUEST);
+  }
+
+  if (await userDao.findUserIdByEmail(email)) {
+    throw new customException(DUPLICATED_EMAIL);
   }
 
   const saltRound = 12;
@@ -28,17 +36,13 @@ const signIn = async (email, password) => {
     const user = await findUserIdByEmail(email);
 
     if (!user) {
-      const err = new Error("INVALID_EMAIL_OR_PASSWORD");
-      err.statusCode = 401;
-      throw err;
+      throw new customException(INVALID_EMAIL_OR_PASSWORD);
     }
 
     const isMatched = await bcrypt.compare(password, user.password);
 
     if (!isMatched) {
-      const err = new Error("INVALID_EMAIL_OR_PASSWORD");
-      err.statusCode = 401;
-      throw err;
+      throw new customException(INVALID_EMAIL_OR_PASSWORD);
     }
 
     const payload = { userId: user.email };
@@ -65,10 +69,17 @@ const processPosts = (rows) => {
 
 const updatePostContent = async (userId, postId, content) => {
   try {
-    userDao.updatePostContent(userId, postId, content);
-    return userDao.getUpdatedPost(userId, postId);
+    const post = await userDao.getPostByIdAndUserId(userId, postId);
+
+    if (!post || post.length === 0) {
+      throw new CustomException(NONE_POST);
+    }
+
+    await userDao.updatePostContent(userId, postId, content);
+    return await userDao.getUpdatedPost(userId, postId);
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 
@@ -77,6 +88,7 @@ const findUserIdByEmail = async (email) => {
     return await userDao.findUserIdByEmail(email);
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 

@@ -1,3 +1,5 @@
+const { DATABASE_ERROR } = require("../utils/baseResponseStatus");
+const CustomException = require("../utils/handler/customException");
 const appDataSource = require("./appDataSource");
 
 const getAllposts = async () => {
@@ -15,9 +17,7 @@ const getAllposts = async () => {
       `
     );
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 500;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 
@@ -32,9 +32,7 @@ const checkExistPost = async (postId) => {
       [postId]
     );
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 500;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 
@@ -48,9 +46,7 @@ const createPost = async (title, content, image_url, user_id) => {
       [title, content, image_url, user_id]
     );
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 400;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 
@@ -65,9 +61,7 @@ const deletePostById = async (postId) => {
       [postId]
     );
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 500;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 

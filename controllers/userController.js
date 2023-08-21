@@ -1,19 +1,27 @@
 const userService = require("../services/userService");
+const baseResponse = require("../utils/baseResponse");
+const { KEY_ERROR, NONE_POST } = require("../utils/baseResponseStatus");
+const CustomException = require("../utils/handler/customException");
 
-const signUp = async (req, res) => {
+const signUp = async (req, res, next) => {
   try {
     const { name, email, profileImage, password } = req.body;
 
     if (!name || !email || !password || !profileImage) {
-      return res.status(400).json({ message: "KEY_ERROR" });
+      return CustomException(KEY_ERROR);
     }
 
-    await userService.signUp(name, email, profileImage, password);
+    const userId = await userService.signUp(
+      name,
+      email,
+      profileImage,
+      password
+    );
 
-    res.status(201).json({ message: "User_Created" });
+    return baseResponse({ userId }, res);
   } catch (error) {
     console.log(error);
-    return res.status(error.statusCode || 500).json({ messgae: error.message });
+    return baseResponse(error, res);
   }
 };
 
@@ -22,14 +30,14 @@ const signIn = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "KEY_ERROR" });
+      throw new CustomException(KEY_ERROR);
     }
 
     const token = await userService.signIn(email, password);
-    res.status(200).json({ accessToken: token });
+    return baseResponse({ accessToken: token }, res);
   } catch (error) {
     console.log(error);
-    return res.status(error.statusCode || 500).json({ message: error.message });
+    return baseResponse(error, res);
   }
 };
 
@@ -38,17 +46,21 @@ const getPostsByUserId = async (req, res) => {
     const { userId } = req.params;
 
     const rows = await userService.getPostsByUserId(userId);
+    if (rows.length === 0) {
+      throw new CustomException(NONE_POST);
+    }
     const processedPosts = userService.processPosts(rows);
 
-    res.status(200).json({
-      data: {
-        userId: rows[0].userId,
-        userProfileImage: rows[0].userProfileImage,
-        postings: processedPosts,
-      },
-    });
+    const data = {
+      userId: rows[0].userId,
+      userProfileImage: rows[0].userProfileImage,
+      postings: processedPosts,
+    };
+
+    return baseResponse(data, res);
   } catch (error) {
-    return res.status(error.statusCode || 500).json({ message: error.message });
+    console.log(error);
+    return baseResponse(error, res);
   }
 };
 
@@ -59,9 +71,10 @@ const updatePostByUserId = async (req, res) => {
 
     const rows = await userService.updatePostContent(userId, postId, content);
 
-    res.status(200).json({ data: rows });
+    return baseResponse(rows, res);
   } catch (error) {
-    return res.status(error.statusCode || 500).json({ message: error.message });
+    console.log(error);
+    return baseResponse(error, res);
   }
 };
 
