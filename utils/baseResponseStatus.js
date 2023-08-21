@@ -16,6 +16,13 @@ const baseResponseStatus = {
     responseCode: 2000,
     responseMessage: "잘못된 요청이 존재합니다.",
   },
+
+  KEY_ERROR: {
+    key: "KEY_ERROR",
+    isSuccess: false,
+    responseCode: 2001,
+    responseMessage: "KEY_ERROR가 존재합니다.",
+  },
   INVALID_EMAIL_OR_PASSWORD: {
     key: "INVALID_EMAIL_ORPASSWORD",
     isSuccess: false,

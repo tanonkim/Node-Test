@@ -1,5 +1,7 @@
 const userService = require("../services/userService");
 const baseResponse = require("../utils/baseResponse");
+const { KEY_ERROR } = require("../utils/baseResponseStatus");
+const CustomException = require("../utils/handler/customException");
 
 const signUp = async (req, res, next) => {
   try {
@@ -28,11 +30,11 @@ const signIn = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "KEY_ERROR" });
+      throw new CustomException(KEY_ERROR);
     }
 
     const token = await userService.signIn(email, password);
-    res.status(200).json({ accessToken: token });
+    return baseResponse({ accessToken: token }, res);
   } catch (error) {
     console.log(error);
     return baseResponse(error, res);
