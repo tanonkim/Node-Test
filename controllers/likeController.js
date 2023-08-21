@@ -1,4 +1,5 @@
 const likeService = require("../services/likeService");
+const baseResponse = require("../utils/baseResponse");
 
 const toggleLike = async (req, res) => {
   const { userId, postId } = req.params;
@@ -6,12 +7,13 @@ const toggleLike = async (req, res) => {
     const result = await likeService.toggleLike(userId, postId);
 
     if (result.liked) {
-      res.status(200).json({ message: "likeCreated" });
+      return baseResponse("likeCreated", res);
     } else {
-      res.status(200).json({ message: "likesDeleted" });
+      return baseResponse("likesDeleted", res);
     }
-  } catch (err) {
-    return res.status(err.statusCode || 500).json({ messgae: err.message });
+  } catch (error) {
+    console.log(error);
+    return baseResponse(error, res);
   }
 };
 

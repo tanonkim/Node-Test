@@ -1,3 +1,5 @@
+const { DATABASE_ERROR } = require("../utils/baseResponseStatus");
+const CustomException = require("../utils/handler/customException");
 const appDataSource = require("./appDataSource");
 
 const isLikeExist = async (userId, postId) => {
@@ -12,9 +14,7 @@ const isLikeExist = async (userId, postId) => {
       [userId, postId]
     );
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 500;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 
@@ -28,9 +28,7 @@ const postLike = async (userId, postId) => {
       [userId, postId]
     );
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 500;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 
@@ -45,9 +43,7 @@ const deleteLike = async (userId, postId) => {
       [userId, postId]
     );
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 500;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 
