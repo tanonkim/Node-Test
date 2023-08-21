@@ -16,7 +16,7 @@ const signUp = async (req, res, next) => {
       password
     );
 
-    return baseResponse({ userId: userId }, res);
+    return baseResponse({ userId }, res);
   } catch (error) {
     console.log(error);
     return baseResponse(error, res);
