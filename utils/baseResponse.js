@@ -2,10 +2,9 @@ const CustomException = require("./handler/customException");
 
 const baseResponse = (err, req, res, next) => {
   if (err instanceof CustomException) {
-    return res.status(err.statusCode).json({
+    return res.status(200).json({
       isSuccess: err.isSuccess,
       responseCode: err.responseCode,
-      statusCode: err.statusCode,
       responseMessage: err.responseMessage,
     });
   }

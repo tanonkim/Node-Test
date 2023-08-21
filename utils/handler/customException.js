@@ -9,9 +9,7 @@ function CustomException(errorEnum) {
 
   this.isSuccess = errorDetail.isSuccess;
   this.responseMessage = errorDetail.responseMessage;
-  this.statusCode = errorDetail.statusCode;
   this.responseCode = errorDetail.responseCode;
-  // this.stack = new Error().stack;
 }
 
 CustomException.prototype = Object.create(Error.prototype);
