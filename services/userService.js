@@ -88,6 +88,7 @@ const findUserIdByEmail = async (email) => {
     return await userDao.findUserIdByEmail(email);
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 
