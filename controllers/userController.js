@@ -71,10 +71,10 @@ const updatePostByUserId = async (req, res) => {
 
     const rows = await userService.updatePostContent(userId, postId, content);
 
-    res.status(200).json({ data: rows });
+    return baseResponse(rows, res);
   } catch (error) {
     console.log(error);
-    next(error);
+    return baseResponse(error, res);
   }
 };
 

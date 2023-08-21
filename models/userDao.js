@@ -1,3 +1,5 @@
+const { DATABASE_ERROR } = require("../utils/baseResponseStatus");
+const CustomException = require("../utils/handler/customException");
 const appDataSource = require("./appDataSource");
 
 const createUser = async (name, email, profileImage, password) => {
@@ -20,9 +22,7 @@ const createUser = async (name, email, profileImage, password) => {
 
     return result[0].userId;
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 500;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 
@@ -39,9 +39,7 @@ const findUserIdByEmail = async (email) => {
 
     return data;
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 500;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 
@@ -62,9 +60,7 @@ const getPostsByUserId = async (userId) => {
     );
     return rows;
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 500;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 
@@ -80,9 +76,7 @@ const updatePostContent = async (userId, postId, content) => {
       [content, userId, postId]
     );
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 500;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 
@@ -99,9 +93,22 @@ const getUpdatedPost = async (userId, postId) => {
       [userId, postId]
     );
   } catch (err) {
-    const error = new Error("INVALID_DATA_INPUT");
-    error.statusCode = 500;
-    throw error;
+    throw new CustomException(DATABASE_ERROR);
+  }
+};
+
+const getPostByIdAndUserId = async (userId, postId) => {
+  try {
+    return await appDataSource.query(
+      `
+      SELECT id as postId
+      FROM posts
+      WHERE id = ?
+        AND user_id = ?`,
+      [postId, userId]
+    );
+  } catch (err) {
+    throw new CustomException(DATABASE_ERROR);
   }
 };
 
@@ -111,4 +118,5 @@ module.exports = {
   updatePostContent,
   getUpdatedPost,
   findUserIdByEmail,
+  getPostByIdAndUserId,
 };

@@ -7,7 +7,9 @@ const {
   INVALID_REQUEST,
   INVALID_EMAIL_OR_PASSWORD,
   DUPLICATED_EMAIL,
+  NONE_POST,
 } = require("../utils/baseResponseStatus");
+const CustomException = require("../utils/handler/customException");
 const secretKey = process.env.SECRET_KEY;
 
 const signUp = async (name, email, profileImage, password) => {
@@ -67,10 +69,17 @@ const processPosts = (rows) => {
 
 const updatePostContent = async (userId, postId, content) => {
   try {
-    userDao.updatePostContent(userId, postId, content);
-    return userDao.getUpdatedPost(userId, postId);
+    const post = await userDao.getPostByIdAndUserId(userId, postId);
+
+    if (!post || post.length === 0) {
+      throw new CustomException(NONE_POST);
+    }
+
+    await userDao.updatePostContent(userId, postId, content);
+    return await userDao.getUpdatedPost(userId, postId);
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 
