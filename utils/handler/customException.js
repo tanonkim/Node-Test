@@ -1,19 +1,20 @@
 const baseResponseStatus = require("../baseResponseStatus");
 
-function customException(errorEnum) {
+function CustomException(errorEnum) {
   const errorDetail = baseResponseStatus[errorEnum.key];
+
   if (!errorDetail) {
     throw new Error("Invalid Error Enum");
   }
 
-  this.name = "customException";
-  this.message = errorDetail.message;
+  this.isSuccess = errorDetail.isSuccess;
+  this.responseMessage = errorDetail.responseMessage;
   this.statusCode = errorDetail.statusCode;
-  this.errorCode = errorDetail.errorCode;
-  this.stack = new Error().stack;
+  this.responseCode = errorDetail.responseCode;
+  // this.stack = new Error().stack;
 }
 
-customException.prototype = Object.create(Error.prototype);
-customException.prototype.constructor = customException;
+CustomException.prototype = Object.create(Error.prototype);
+CustomException.prototype.constructor = CustomException;
 
-module.exports = customException;
+module.exports = CustomException;
