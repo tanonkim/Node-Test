@@ -6,6 +6,7 @@ const customException = require("../utils/handler/customException");
 const {
   INVALID_REQUEST,
   INVALID_EMAIL_OR_PASSWORD,
+  DUPLICATED_EMAIL,
 } = require("../utils/baseResponseStatus");
 const secretKey = process.env.SECRET_KEY;
 
@@ -16,6 +17,10 @@ const signUp = async (name, email, profileImage, password) => {
 
   if (!passwordRegex.test(password)) {
     throw new customException(INVALID_REQUEST);
+  }
+
+  if (userDao.findUserIdByEmail(email)) {
+    throw new customException(DUPLICATED_EMAIL);
   }
 
   const saltRound = 12;
