@@ -36,16 +36,30 @@ const checkExistPost = async (postId) => {
   }
 };
 
-const createPost = async (title, content, image_url, user_id) => {
+const createPost = async (title, content, user_id) => {
   try {
     return await appDataSource.query(
       `
-      INSERT INTO posts(title, content, image_url, user_id)
-      VALUES (?, ?, ?, ?);
+      INSERT INTO posts(title, content, user_id)
+      VALUES (?, ?, ?);
     `,
-      [title, content, image_url, user_id]
+      [title, content, user_id]
     );
   } catch (err) {
+    throw new CustomException(DATABASE_ERROR);
+  }
+};
+
+const saveImageUrl = async (postId, imageUrl, userId) => {
+  try {
+    return await appDataSource.query(
+      `
+      INSERT INTO PostImage (post_id, user_id, post_image_url)
+      VALUES (?, ?, ?);
+      `,
+      [postId, userId, imageUrl]
+    );
+  } catch (error) {
     throw new CustomException(DATABASE_ERROR);
   }
 };
@@ -69,5 +83,6 @@ module.exports = {
   getAllposts,
   checkExistPost,
   createPost,
+  saveImageUrl,
   deletePostById,
 };
