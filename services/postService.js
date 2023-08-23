@@ -9,9 +9,17 @@ const postInfo = async (postId) => {
   return postInfoQuery[0];
 };
 
-const createPost = async (title, content, image_url, user_id) => {
+const createPost = async (title, content, imageUrls, user_id) => {
   try {
-    return postDao.createPost(title, content, image_url, user_id);
+    const postResult = await postDao.createPost(title, content, user_id); // 첫 번째 imageUrl은 null로 설정
+
+    const postId = postResult.insertId;
+
+    for (const imageUrl of imageUrls) {
+      await postDao.saveImageUrl(postId, imageUrl, user_id);
+    }
+
+    return postResult;
   } catch (error) {
     console.log(error);
     throw error;
