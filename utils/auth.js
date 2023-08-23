@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const secretKey = process.env.SECRET_KEY;
 const userService = require("../services/userService");
+const CustomException = require("./handler/customException");
+const { INVALID_USER } = require("./baseResponseStatus");
 
 const loginReq = async (req, res, next) => {
   try {
@@ -36,4 +38,21 @@ const loginReq = async (req, res, next) => {
   }
 };
 
-module.exports = loginReq;
+const validateUserId = (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const userIdFromToken = req.userId;
+
+    if (parseInt(userId) !== userIdFromToken) {
+      const error = new Error("INVALID_USER");
+      error.statusCode = 401;
+      throw error;
+    }
+    next();
+  } catch (error) {
+    console.log(error);
+    return res.status(error.statusCode || 500).json({ message: error.message });
+  }
+};
+
+module.exports = { loginReq, validateUserId };
