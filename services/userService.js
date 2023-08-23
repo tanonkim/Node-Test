@@ -60,11 +60,22 @@ const getPostsByUserId = async (userId) => {
 };
 
 const processPosts = (rows) => {
-  return rows.map((row) => ({
-    postingId: row.postingId,
-    postingImageUrl: row.postingImageUrl,
-    postingContent: row.postingContent,
-  }));
+  let postMap = new Map();
+
+  rows.forEach((row) => {
+    if (postMap.has(row.postingId)) {
+      const post = postMap.get(row.postingId);
+      post.postingImageUrl.push(row.postingImageUrl);
+    } else {
+      postMap.set(row.postingId, {
+        postingId: row.postingId,
+        postingImageUrl: [row.postingImageUrl],
+        postingContent: row.postingContent,
+      });
+    }
+  });
+
+  return [...postMap.values()];
 };
 
 const updatePostContent = async (userId, postId, content) => {
