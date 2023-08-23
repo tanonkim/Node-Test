@@ -84,6 +84,35 @@ const updatePostContent = async (userId, postId, content) => {
   }
 };
 
+const getImagesByPostId = async (postId) => {
+  try {
+    return await appDataSource.query(
+      `
+        SELECT * 
+        FROM PostImage 
+        WHERE post_id = ?
+      `,
+      [postId]
+    );
+  } catch (err) {
+    throw new CustomException(DATABASE_ERROR);
+  }
+};
+
+const deleteImageRecord = async (imageId) => {
+  try {
+    return await appDataSource.query(
+      `
+        DELETE FROM PostImage 
+        WHERE id = ?
+      `,
+      [imageId]
+    );
+  } catch (err) {
+    throw new CustomException(DATABASE_ERROR);
+  }
+};
+
 const getUpdatedPost = async (userId, postId) => {
   try {
     return await appDataSource.query(
@@ -120,6 +149,8 @@ module.exports = {
   createUser,
   getPostsByUserId,
   updatePostContent,
+  getImagesByPostId,
+  deleteImageRecord,
   getUpdatedPost,
   findUserIdByEmail,
   getPostByIdAndUserId,
