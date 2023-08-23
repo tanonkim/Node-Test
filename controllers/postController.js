@@ -15,7 +15,9 @@ const getAllposts = async (req, res) => {
 
 const createPost = async (req, res) => {
   try {
-    const { title, content, imageUrl } = req.body;
+    const { title, content } = req.body;
+    const userId = req.userId;
+    const imageUrls = req.uploadedFileUrls;
 
     if (!title || !content) {
       throw new CustomException(KEY_ERROR);
@@ -24,8 +26,8 @@ const createPost = async (req, res) => {
     const postId = await postService.createPost(
       title,
       content,
-      imageUrl,
-      req.userId
+      imageUrls,
+      userId
     );
 
     return baseResponse({ postId: `${postId.insertId}` }, res);

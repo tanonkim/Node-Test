@@ -26,7 +26,7 @@ const baseResponseStatus = {
 
   //   UserException
   INVALID_EMAIL_OR_PASSWORD: {
-    key: "INVALID_EMAIL_ORPASSWORD",
+    key: "INVALID_EMAIL_OR_PASSWORD",
     isSuccess: false,
     responseCode: 2010,
     responseMessage: "이메일 혹은 비밀번호가 잘못되었습니다.",
