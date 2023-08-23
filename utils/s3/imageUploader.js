@@ -1,7 +1,9 @@
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { fromEnv } = require("@aws-sdk/credential-provider-env");
 const multer = require("multer");
 const path = require("path");
+const CustomException = require("../handler/customException");
 
 const s3Client = new S3Client({
   region: process.env.AWS_S3_REGION,
@@ -62,7 +64,25 @@ const uploadToS3 = async (req, res, next) => {
   next();
 };
 
+const deleteImageFromS3 = async (imageUrl) => {
+  const baseUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/`;
+  const key = imageUrl.slice(baseUrl.length); // 키 추출
+
+  const params = {
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Key: key,
+  };
+
+  try {
+    await s3Client.send(new DeleteObjectCommand(params));
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error deleting image from S3");
+  }
+};
+
 module.exports = {
   imageUploader,
   uploadToS3,
+  deleteImageFromS3,
 };

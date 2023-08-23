@@ -37,6 +37,12 @@ const baseResponseStatus = {
     responseCode: 2011,
     responseMessage: "중복된 이메일입니다.",
   },
+  INVALID_USER: {
+    key: "INVALID_USER",
+    isSuccess: false,
+    responseCode: 2012,
+    responseMessage: "유효한 유저가 아닙니다.",
+  },
 
   // PostException
   NONE_POST: {

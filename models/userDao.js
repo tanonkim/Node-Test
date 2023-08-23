@@ -46,15 +46,19 @@ const findUserIdByEmail = async (email) => {
 const getPostsByUserId = async (userId) => {
   try {
     const rows = await appDataSource.query(
-      `SELECT u.id    as userId,
-      u.profile_image as userProfileImage,
-      p.id            as postingId,
-      p.image_url     as postingImageUrl,
-      p.content       as postingContent
-      FROM users      as u
-      LEFT JOIN posts as p
-      ON u.id = p.user_id
-      WHERE u.id = ?
+      `
+      SELECT 
+          posts.user_id   AS userId,
+          u.profile_image AS userProfileImage,
+          posts.id        AS postingId,
+          posts.title,
+          posts.content AS postingContent,
+          PostImage.post_image_url AS postingImageUrl
+      FROM posts
+      LEFT JOIN users u ON u.id = posts.user_id
+      LEFT JOIN PostImage ON posts.id = PostImage.post_id
+      WHERE posts.user_id = ?
+      ORDER BY posts.id
       `,
       [userId]
     );
@@ -74,6 +78,35 @@ const updatePostContent = async (userId, postId, content) => {
           AND id = ?
         `,
       [content, userId, postId]
+    );
+  } catch (err) {
+    throw new CustomException(DATABASE_ERROR);
+  }
+};
+
+const getImagesByPostId = async (postId) => {
+  try {
+    return await appDataSource.query(
+      `
+        SELECT * 
+        FROM PostImage 
+        WHERE post_id = ?
+      `,
+      [postId]
+    );
+  } catch (err) {
+    throw new CustomException(DATABASE_ERROR);
+  }
+};
+
+const deleteImageRecord = async (imageId) => {
+  try {
+    return await appDataSource.query(
+      `
+        DELETE FROM PostImage 
+        WHERE id = ?
+      `,
+      [imageId]
     );
   } catch (err) {
     throw new CustomException(DATABASE_ERROR);
@@ -116,6 +149,8 @@ module.exports = {
   createUser,
   getPostsByUserId,
   updatePostContent,
+  getImagesByPostId,
+  deleteImageRecord,
   getUpdatedPost,
   findUserIdByEmail,
   getPostByIdAndUserId,
