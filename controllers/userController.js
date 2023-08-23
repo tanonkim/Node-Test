@@ -68,8 +68,14 @@ const updatePostByUserId = async (req, res) => {
   try {
     const { userId, postId } = req.params;
     const { content } = req.body;
+    const imageUrl = req.uploadedFileUrls;
 
-    const rows = await userService.updatePostContent(userId, postId, content);
+    const rows = await userService.updatePostContent(
+      userId,
+      postId,
+      content,
+      imageUrl
+    );
 
     return baseResponse(rows, res);
   } catch (error) {
