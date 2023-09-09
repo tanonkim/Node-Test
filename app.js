@@ -16,7 +16,7 @@ dataSource
     console.log("Data Source has been initialized!");
   })
   .catch((error) => {
-    console.err(`Initialize Error ${error}`);
+    console.log(`Initialize Error ${error}`);
   });
 
 const app = express();
