@@ -2,56 +2,67 @@ const jwt = require("jsonwebtoken");
 const secretKey = process.env.SECRET_KEY;
 const userService = require("../services/userService");
 const CustomException = require("./handler/customException");
-const { INVALID_USER } = require("./baseResponseStatus");
+const {
+  INVALID_USER,
+  NO_AUTHORIZATION_IN_HEADER,
+  INVALID_TOKEN_TYPE,
+} = require("./baseResponseStatus");
 
 const loginReq = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
 
     if (!token) {
-      const error = new Error("NO_AUTHORIZATION_IN_HEADER");
-      error.statusCode = 401;
-      throw error;
+      throw new CustomException(NO_AUTHORIZATION_IN_HEADER);
     }
 
     let decoded;
     try {
       decoded = jwt.verify(token, secretKey);
     } catch (e) {
-      const error = new Error("INVALID_TOKEN");
-      error.statusCode = 401;
-      throw error;
+      throw new CustomException(INVALID_TOKEN_TYPE);
     }
 
     const userData = await userService.findUserIdByEmail(decoded.userId);
 
     if (!userData) {
-      const error = new Error("INVALID_USER");
-      error.statusCode = 401;
-      throw error;
+      throw new CustomException(INVALID_USER);
     }
 
     req.userId = userData.id;
     next();
   } catch (error) {
-    return res.status(error.statusCode || 500).json({ message: error.message });
+    if (error instanceof CustomException) {
+      return res.status(200).json({
+        isSuccess: error.isSuccess,
+        responseMessage: error.responseMessage,
+        responseCode: error.responseCode,
+      });
+    }
+
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-const validateUserId = (req, res, next) => {
+const validateUserId = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const userIdFromToken = req.userId;
 
     if (parseInt(userId) !== userIdFromToken) {
-      const error = new Error("INVALID_USER");
-      error.statusCode = 401;
-      throw error;
+      throw new CustomException(INVALID_USER);
     }
     next();
   } catch (error) {
-    console.log(error);
-    return res.status(error.statusCode || 500).json({ message: error.message });
+    if (error instanceof CustomException) {
+      return res.status(200).json({
+        isSuccess: error.isSuccess,
+        responseMessage: error.responseMessage,
+        responseCode: error.responseCode,
+      });
+    }
+
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
