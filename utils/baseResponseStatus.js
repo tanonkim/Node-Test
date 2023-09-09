@@ -52,6 +52,21 @@ const baseResponseStatus = {
     responseMessage: "POST가 존재하지 않습니다.",
   },
 
+  // JwtException
+  NO_AUTHORIZATION_IN_HEADER: {
+    key: "NO_AUTHORIZATION_IN_HEADER",
+    isSuccess: false,
+    responseCode: 2030,
+    responseMessage: "Authorization 헤더가 없습니다.",
+  },
+
+  INVALID_TOKEN_TYPE: {
+    key: "INVALID_TOKEN_TYPE",
+    isSuccess: false,
+    responseCode: 2031,
+    responseMessage: "잘못된 토큰 타입입니다.",
+  },
+
   /**
    * 4000 : Database, Server 오류
    */
